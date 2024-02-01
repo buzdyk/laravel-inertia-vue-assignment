@@ -18,6 +18,7 @@ use Inertia\Inertia;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
-        'name' => 'World'
+        'statuses' => \App\Models\NannyBooking::statuses(),
+        'bookings' => \App\Models\NannyBooking::with('customer', 'nanny')->get()
     ]);
 });

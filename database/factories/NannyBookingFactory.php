@@ -37,6 +37,8 @@ class NannyBookingFactory extends Factory
             ]
         };
 
+        $startsAt->minute = 0;
+
         return [
             'customer_user_id' => User::customers()->inRandomOrder()->first()->id,
             'nanny_user_id' => $nannyId,
