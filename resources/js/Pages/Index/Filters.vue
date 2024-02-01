@@ -1,6 +1,6 @@
 <script setup>
-    import { startCase, forOwn, map } from 'lodash'
-    import { ref, watch, reactive, defineModel } from 'vue'
+    import { startCase, map } from 'lodash'
+    import { computed, defineModel } from 'vue'
 
     const filter = defineModel()
 
@@ -11,11 +11,17 @@
         },
     })
 
-    defineEmits(['resetClicked'])
+    defineEmits(['resetFilter'])
+
+    const isFilterDirty = computed(() => {
+        let isDirty = false
+        map(filter.value, v => isDirty ||= v)
+        return isDirty
+    })
 </script>
 
 <template>
-    <div class="relative text-xs md:flex justify-left items-center mb-6 md:text-base">
+    <div class="relative text-xs md:flex justify-left items-center mt-8 mb-6 md:text-base">
         <div class="flex justify-around">
             <input v-model="filter.query" type="text" class="w-1/3 text-xs md:text-base border-0 focus:ring-0 focus:outline-none focus:border-0 focus:border-b focus:border-b-gray-600 border-b border-b-gray-400 py-1" placeholder="Search">
 
@@ -36,6 +42,6 @@
             </div>
         </div>
 
-        <span @click="$emit('resetClicked')" class="text-2xl justify-self-end absolute top-1 right-0 cursor-pointer">&times;</span>
+        <span v-if="isFilterDirty" @click="$emit('resetFilter')" class="text-2xl justify-self-end absolute top-1 right-0 cursor-pointer">&times;</span>
     </div>
 </template>

@@ -49,10 +49,12 @@ const resetFilter = () => {
 
 <template>
     <Layout>
-        <Head title="Bookings" />
+        <Head title="Nanny Bookings" />
 
-        <Filters v-model="filter" :statuses="statuses" @resetClicked="resetFilter" />
+        <h1 class="text-2xl font-bold">Nanny Bookings</h1>
 
-        <Bookings :bookings="filteredBookings" />
+        <Filters v-model="filter" :statuses="statuses" @resetFilter="resetFilter" />
+
+        <Bookings :bookings="filteredBookings" @resetFilter="resetFilter"/>
     </Layout>
 </template>

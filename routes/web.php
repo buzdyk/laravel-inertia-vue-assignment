@@ -1,9 +1,7 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,9 +14,4 @@ use Inertia\Inertia;
 |
 */
 
-Route::get('/', function () {
-    return Inertia::render('Welcome', [
-        'statuses' => \App\Models\NannyBooking::statuses(),
-        'bookings' => \App\Models\NannyBooking::with('customer', 'nanny')->get()
-    ]);
-});
+Route::get('/', [\App\Http\Controllers\NannyBookings::class, 'index']);
