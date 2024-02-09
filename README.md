@@ -1,6 +1,6 @@
 # Ninacare test assignment
 
-![Filtering](./readme.gif)
+![Filtering](./readme.png)
 
 Notes: 
 

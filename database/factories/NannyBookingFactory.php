@@ -2,10 +2,12 @@
 
 namespace Database\Factories;
 
+use App\Enums\NannyBookingStatus;
 use App\Models\NannyBooking;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use App\Enums\NannyBookingStatus as Status;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\NannyBooking>
@@ -19,19 +21,19 @@ class NannyBookingFactory extends Factory
      */
     public function definition(): array
     {
-        $status = fake()->randomElement(NannyBooking::statuses());
+        $status = fake()->randomElement(NannyBookingStatus::cases());
 
         list ($nannyId, $startsAt) = match ($status) {
-            NannyBooking::STATUS_DRAFT,
-            NannyBooking::STATUS_LOOKING_FOR_NANNY => [
+            Status::DRAFT,
+            Status::LOOKING_FOR_NANNY => [
                 null,
                 Carbon::now()->addDays(fake()->numberBetween(1, 10))
             ],
-            NannyBooking::STATUS_SCHEDULED => [
+            Status::SCHEDULED => [
                 User::nannies()->inRandomOrder()->first()->id,
                 Carbon::now()->addDays(fake()->numberBetween(1, 10))
             ],
-            NannyBooking::STATUS_COMPLETED => [
+            Status::COMPLETED => [
                 User::nannies()->inRandomOrder()->first()->id,
                 Carbon::now()->subDays(fake()->numberBetween(1, 100))
             ]

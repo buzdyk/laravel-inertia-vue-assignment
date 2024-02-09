@@ -4,9 +4,8 @@ import Filters from './Index/Filters.vue'
 import Bookings from './Index/Bookings.vue'
 
 import { map } from 'lodash'
-import { isAfter, isBefore } from 'date-fns'
 import { Head, router } from '@inertiajs/vue3'
-import { reactive, computed } from 'vue'
+import {reactive, computed, watch} from 'vue'
 
 const props = defineProps({
     statuses: {
@@ -17,33 +16,31 @@ const props = defineProps({
     bookings: {
         type: Array,
         required: true,
-    }
+    },
+
+    query: {
+        type: Object,
+        default: { search: null, status: null }
+    },
 })
 
 const filter = reactive({
-    query: null,
-    status: null,
-    starts_at: null,
-    ends_at: null,
+    search: props.query.search,
+    status: props.query.status,
 })
 
-const filteredBookings = computed(() => {
-    let bookings = props.bookings
-
-    if (filter.query) bookings = bookings.filter(b => {
-        let str = `${b.customer.name}${b.customer.email}` + (b.nanny ? `${b.nanny.email}${b.nanny.name}` : 'not assigned')
-        return str.includes(filter.query)
-    })
-
-    if (filter.status) bookings = bookings.filter(b => b.status === filter.status)
-    if (filter.starts_at) bookings = bookings.filter(b => isAfter(b.starts_at, filter.starts_at))
-    if (filter.ends_at) bookings = bookings.filter(b => isBefore(b.ends_at, filter.ends_at))
-
-    return bookings
-})
+const applyFilter = () => {
+    router.visit('/',
+        {
+            preserveState: true,
+            data: filter,
+            only: ['bookings']
+        })
+}
 
 const resetFilter = () => {
     map(filter, (v, k) => filter[k] = null)
+    applyFilter()
 }
 </script>
 
@@ -53,8 +50,16 @@ const resetFilter = () => {
 
         <h1 class="text-2xl font-bold">Nanny Bookings</h1>
 
-        <Filters v-model="filter" :statuses="statuses" @resetFilter="resetFilter" />
+        <Filters
+            v-model="filter"
+            :statuses="statuses"
+            @resetFilter="resetFilter"
+            @searchClicked="applyFilter"
+        />
 
-        <Bookings :bookings="filteredBookings" @resetFilter="resetFilter"/>
+        <Bookings
+            :bookings="bookings"
+            @resetFilter="resetFilter"
+        />
     </Layout>
 </template>

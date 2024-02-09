@@ -2,6 +2,9 @@
 
 namespace App\Models;
 
+use App\Enums\NannyBookingStatus;
+use Illuminate\Database\Eloquent\Builder as EloquentQueryBuilder;
+use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -9,10 +12,9 @@ class NannyBooking extends Model
 {
     use HasFactory;
 
-    const STATUS_DRAFT = 'draft';
-    const STATUS_LOOKING_FOR_NANNY = 'looking-for-nanny';
-    const STATUS_SCHEDULED = 'scheduled';
-    const STATUS_COMPLETED = 'completed';
+    protected $casts = [
+        'position' => NannyBookingStatus::class
+    ];
 
     public function customer()
     {
@@ -24,13 +26,20 @@ class NannyBooking extends Model
         return $this->belongsTo(User::class, 'nanny_user_id');
     }
 
-    public static function statuses()
+    public function scopeBySearch(EloquentQueryBuilder $query, string $search)
     {
-        return [
-            self::STATUS_DRAFT,
-            self::STATUS_LOOKING_FOR_NANNY,
-            self::STATUS_SCHEDULED,
-            self::STATUS_COMPLETED
-        ];
+        $query->whereExists(function(QueryBuilder $sub) use ($search) {
+            $searchConcat = "CONCAT(users.name, ' ', users.email)";
+
+            $sub->selectRaw(1)
+                ->from('users')
+                ->where(\DB::raw($searchConcat), 'like', "%$search%")
+                ->whereRaw('users.id IN (nanny_bookings.customer_user_id, nanny_bookings.nanny_user_id)');
+        });
+    }
+
+    public function scopeByStatus(EloquentQueryBuilder $query, NannyBookingStatus $status)
+    {
+        $query->where('status', $status->value);
     }
 }
