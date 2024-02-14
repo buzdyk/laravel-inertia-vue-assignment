@@ -16,11 +16,9 @@ Challenge (~2-3 hours)
 
 Let's assume we want to filter through the nanny bookings based on the attributes of the nanny bookings and based on the User relationship. Implement a way of filtering the nanny bookings and make sure that the component can be easily put on other index pages without much effort. How would you do this? Tip: reusability and clean code is very important. Good luck!
 
-## Solution notes
+## Solution 
 
 ![Filtering](./readme.png)
-
-Notes:
 
 1. Implemented basic responsive layout for the bookings.
 2. Implemented a server-side search. The component is reusable as is.
