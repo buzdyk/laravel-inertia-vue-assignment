@@ -20,10 +20,9 @@ Let's assume we want to filter through the nanny bookings based on the attribute
 
 ![Filtering](./readme.png)
 
-1. Implemented basic responsive layout for the bookings.
+1. Implemented a basic responsive layout for the bookings.
 2. Implemented a server-side search. The component is reusable as is.
 3. Booking statuses account only for the positive flow. I imagine there would be other statuses in real-world scenarios.
-4. It's assumed a user can have only one role.
 
 Thank you,
 Gregory.
