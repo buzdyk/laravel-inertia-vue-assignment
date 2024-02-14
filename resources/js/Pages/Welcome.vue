@@ -1,30 +1,65 @@
 <script setup>
-import { Head, Link } from '@inertiajs/vue3';
 import Layout from '@/Layouts/Layout.vue'
+import Filters from './Index/Filters.vue'
+import Bookings from './Index/Bookings.vue'
 
-defineProps({
-    name: {
-        type: String,
-        required: true
-    }
+import { map } from 'lodash'
+import { Head, router } from '@inertiajs/vue3'
+import {reactive, computed, watch} from 'vue'
+
+const props = defineProps({
+    statuses: {
+        type: Array,
+        required: true,
+    },
+
+    bookings: {
+        type: Array,
+        required: true,
+    },
+
+    query: {
+        type: Object,
+        default: { search: null, status: null }
+    },
 })
+
+const filter = reactive({
+    search: props.query.search,
+    status: props.query.status,
+})
+
+const applyFilter = () => {
+    router.visit('/',
+        {
+            preserveState: true,
+            data: filter,
+            only: ['bookings']
+        })
+}
+
+const resetFilter = () => {
+    map(filter, (v, k) => filter[k] = null)
+    applyFilter()
+}
 </script>
 
 <template>
     <Layout>
-        <Head title="Welcome" />
+        <Head title="Nanny Bookings" />
 
-        <h1>Hello, {{ name }}</h1>
+        <h1 class="text-2xl font-bold">Nanny Bookings</h1>
+
+        <Filters
+            v-model="filter"
+            :statuses="statuses"
+            @resetFilter="resetFilter"
+            @searchClicked="applyFilter"
+        />
+
+        <Bookings
+            :bookings="bookings"
+            @resetFilter="resetFilter"
+        />
     </Layout>
 </template>
-
-<style>
-.bg-dots-darker {
-    background-image: url("data:image/svg+xml,%3Csvg width='30' height='30' viewBox='0 0 30 30' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1.22676 0C1.91374 0 2.45351 0.539773 2.45351 1.22676C2.45351 1.91374 1.91374 2.45351 1.22676 2.45351C0.539773 2.45351 0 1.91374 0 1.22676C0 0.539773 0.539773 0 1.22676 0Z' fill='rgba(0,0,0,0.07)'/%3E%3C/svg%3E");
-}
-@media (prefers-color-scheme: dark) {
-    .dark\:bg-dots-lighter {
-        background-image: url("data:image/svg+xml,%3Csvg width='30' height='30' viewBox='0 0 30 30' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1.22676 0C1.91374 0 2.45351 0.539773 2.45351 1.22676C2.45351 1.91374 1.91374 2.45351 1.22676 2.45351C0.539773 2.45351 0 1.91374 0 1.22676C0 0.539773 0.539773 0 1.22676 0Z' fill='rgba(255,255,255,0.07)'/%3E%3C/svg%3E");
-    }
-}
-</style>
